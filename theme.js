@@ -1,26 +1,22 @@
-// 主题管理：'auto'（跟随浏览器/系统）| 'light' | 'dark'，存 chrome.storage.local。
-// CSS 按 <html data-theme="dark|light"> 切换；auto 模式监听系统主题变化。
+// 主题管理：light / dark，存 chrome.storage.local。
+// 默认跟随系统主题；用户切换后记住选择。
 
 const THEME_KEY = 'theme';
 const mq = window.matchMedia('(prefers-color-scheme: dark)');
-let current = 'auto';
+let current = mq.matches ? 'dark' : 'light';
 
 function storageOk() {
   return typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local;
 }
 
-function resolve(mode) {
-  return mode === 'light' || mode === 'dark' ? mode : (mq.matches ? 'dark' : 'light');
-}
-
 export function applyTheme(mode) {
-  if (mode === 'light' || mode === 'dark') current = mode; else current = 'auto';
-  document.documentElement.dataset.theme = resolve(current);
+  current = (mode === 'light' || mode === 'dark') ? mode : (mq.matches ? 'dark' : 'light');
+  document.documentElement.dataset.theme = current;
 }
 
 export function getTheme() {
-  if (!storageOk()) return Promise.resolve('auto');
-  return new Promise((res) => chrome.storage.local.get(THEME_KEY, (d) => res(d[THEME_KEY] || 'auto')));
+  if (!storageOk()) return Promise.resolve(null);
+  return new Promise((res) => chrome.storage.local.get(THEME_KEY, (d) => res(d[THEME_KEY] || null)));
 }
 
 export function setTheme(mode) {
@@ -29,20 +25,25 @@ export function setTheme(mode) {
   return current;
 }
 
-// 工具栏按钮循环切换：auto → light → dark → auto
-export function cycleTheme() {
-  const order = ['auto', 'light', 'dark'];
-  return setTheme(order[(order.indexOf(current) + 1) % order.length]);
+// 工具栏按钮：light ↔ dark 切换
+export function toggleTheme() {
+  return setTheme(current === 'dark' ? 'light' : 'dark');
 }
 
-// 页面启动时调用：应用存储的主题，并监听后续变化
+// 页面启动时调用：读取存储（有则用，无则跟随系统），并监听后续变化
 export async function initTheme() {
-  current = await getTheme();
-  applyTheme(current);
-  mq.addEventListener('change', () => applyTheme(current));
+  const saved = await getTheme();
+  applyTheme(saved); // saved 为 null 时回退系统主题
+  mq.addEventListener('change', () => {
+    // 系统主题变化时，仅在无用户保存的偏好时跟随
+    if (!storageOk()) { applyTheme(mq.matches ? 'dark' : 'light'); }
+    else chrome.storage.local.get(THEME_KEY, (d) => {
+      if (!d[THEME_KEY]) applyTheme(mq.matches ? 'dark' : 'light');
+    });
+  });
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
     chrome.storage.onChanged.addListener((changes, area) => {
-      if (area === 'local' && changes[THEME_KEY]) applyTheme(changes[THEME_KEY].newValue || 'auto');
+      if (area === 'local' && changes[THEME_KEY]) applyTheme(changes[THEME_KEY].newValue);
     });
   }
   return current;

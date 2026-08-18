@@ -3,7 +3,7 @@
 //   'url'    —— 地址栏 file:// 目录直开（?dir=C:/…，fetch 目录列表）
 import { pickDir, restoreDir, requestAccess, forgetDir, listFiles, readFile, getExtConfig, buildTreeFromUrl, readFileFromUrl } from './fs.js';
 import { t } from './i18n.js';
-import { initTheme, cycleTheme } from './theme.js';
+import { initTheme, toggleTheme } from './theme.js';
 
 var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 var currentMermaidTheme = dark ? 'dark' : 'default';
@@ -38,12 +38,12 @@ document.getElementById('settingsBtn').addEventListener('click', function () {
     chrome.runtime.openOptionsPage();
 });
 var themeBtn = document.getElementById('themeBtn');
-themeBtn.addEventListener('click', function () { updateThemeBtn(cycleTheme()); });
+themeBtn.addEventListener('click', function () { updateThemeBtn(toggleTheme()); });
 
 // ---------- 静态 UI 文案 / 主题图标 ----------
 function updateThemeBtn(mode) {
-  themeBtn.textContent = mode === 'light' ? '☀' : mode === 'dark' ? '🌙' : '🌓';
-  themeBtn.title = mode === 'light' ? t('themeLight') : mode === 'dark' ? t('themeDark') : t('themeAuto');
+  themeBtn.textContent = mode === 'dark' ? '🌙' : '☀';
+  themeBtn.title = mode === 'dark' ? t('themeDark') : t('themeLight');
   reinitMermaid();
 }
 function applyStaticTexts() {
