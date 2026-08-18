@@ -1,6 +1,7 @@
 # mdpreview
 
 Preview local Markdown files directly in your Chrome browser — no server, no build step, no internet required.
+English · [中文](./README.zh-CN.md)
 
 ## Features
 
@@ -12,7 +13,7 @@ Preview local Markdown files directly in your Chrome browser — no server, no b
 - **Internal links**: relative `.md` links within documents navigate inside the extension.
 - **Right-click context menu**: "md preview" on any page to open the previewer.
 - **I18n**: English and Chinese UI, auto-detected from browser language.
-- **Theme**: system / light / dark, toggled from the toolbar.
+- **Theme**: light / dark toggle, defaults to system theme.
 - **Fully offline**: all libraries are bundled in the extension.
 
 ## Installation
@@ -69,7 +70,7 @@ extension/
   fs.js                  # File access: File System Access API + file:// XHR backends
   urlutil.js             # file:// URL ↔ local path conversion utilities
   i18n.js                # English / Chinese dictionaries + language detection
-  theme.js               # Theme management (auto / light / dark)
+  theme.js               # Theme management (light / dark, default follows system)
   theme-boot.js          # Pre-paint theme flash prevention
   err-surface.js         # Global error surface (never silently blank)
   options.html/js        # Settings page
