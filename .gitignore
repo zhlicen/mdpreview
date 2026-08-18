@@ -1,0 +1,14 @@
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test fixtures (auto-generated)
+tools/fixture-listing.html
+
+# Editor
+*.swp
+*.swo
+*~

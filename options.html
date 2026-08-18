@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>mdpreview</title>
+<script src="theme-boot.js"></script>
+<style>
+  :root{--bg:#fff;--bg2:#f7f8fa;--fg:#1f2328;--fg2:#656d76;--border:#d8dee4;--accent:#0969da}
+  :root[data-theme="dark"]{--bg:#0d1117;--bg2:#161b22;--fg:#e6edf3;--fg2:#9198a1;--border:#30363d;--accent:#4493f8}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--fg);font:15px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;padding:40px 24px}
+  .card{max-width:520px;margin:0 auto;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:28px 24px}
+  h1{font-size:18px;margin-bottom:20px}
+  label{display:block;font-size:13px;color:var(--fg2);margin-bottom:4px}
+  input[type=text],select{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--fg);font-size:14px}
+  input[type=text]:focus,select:focus{outline:none;border-color:var(--accent)}
+  .hint{font-size:12px;color:var(--fg2);margin-top:5px}
+  .row{margin-bottom:16px}
+  .btn{display:inline-block;border:1px solid var(--accent);border-radius:6px;background:var(--accent);color:#fff;font-size:14px;padding:7px 22px;cursor:pointer;margin-top:6px}
+  .btn:hover{opacity:.85}
+  .msg{font-size:13px;color:#1a7f37;margin-top:10px;min-height:20px}
+  :root[data-theme="dark"] .msg{color:#3fb950}
+  hr{border:none;border-top:1px solid var(--border);margin:18px 0}
+  .section-title{font-size:13px;font-weight:600;color:var(--fg2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.04em}
+  .checkbox-row{display:flex;align-items:flex-start;gap:8px;font-size:14px;cursor:pointer;line-height:1.5;color:var(--fg)}
+  .checkbox-row input{margin-top:4px}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 data-i18n="optHeading">mdpreview · Settings</h1>
+
+  <div class="section-title" data-i18n="secExt">显示的文件后缀</div>
+  <div class="row">
+    <label for="docExt" data-i18n="docExtLabel">文档类后缀</label>
+    <input type="text" id="docExt" placeholder="md,mmd" spellcheck="false">
+    <div class="hint" data-i18n="hintSep">用英文逗号分隔，不含点号。</div>
+  </div>
+
+  <div class="row">
+    <label for="imgExt" data-i18n="imgExtLabel">图片类后缀</label>
+    <input type="text" id="imgExt" placeholder="png,jpg,jpeg,gif,svg,webp" spellcheck="false">
+    <div class="hint" data-i18n="hintSep">用英文逗号分隔，不含点号。</div>
+  </div>
+
+  <div class="row">
+    <label class="checkbox-row">
+      <input type="checkbox" id="hideEmptyDirs" checked>
+      <span data-i18n="hideEmpty">隐藏空目录</span>
+    </label>
+  </div>
+
+  <hr>
+
+  <button class="btn" id="saveBtn" data-i18n="save">保存</button>
+  <div class="msg" id="msg"></div>
+</div>
+<script type="module" src="options.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "mdpreview"
+  },
+  "extDescription": {
+    "message": "Preview local Markdown anytime: pick a local folder, browse the file tree, and render Markdown / Mermaid documents — no server needed."
+  },
+  "openAction": {
+    "message": "Open mdpreview"
+  },
+  "ctxMenuTitle": {
+    "message": "md preview"
+  }
+}

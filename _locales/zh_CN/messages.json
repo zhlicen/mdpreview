@@ -1,0 +1,14 @@
+{
+  "extName": {
+    "message": "mdpreview"
+  },
+  "extDescription": {
+    "message": "在浏览器里随时预览本地目录的 Markdown：选中一个本地文件夹，即可浏览文件树、渲染 Markdown / Mermaid 图表，无需搭建服务器。"
+  },
+  "openAction": {
+    "message": "打开 mdpreview"
+  },
+  "ctxMenuTitle": {
+    "message": "md preview"
+  }
+}
