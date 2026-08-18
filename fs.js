@@ -94,7 +94,7 @@ export async function forgetDir() {
 const DEFAULT_EXT_CONFIG = {
   doc:   ['md', 'mmd'],
   img:   ['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'],
-  other: ['json'],
+  other: [],
   hideEmptyDirs: true,
 };
 

@@ -81,7 +81,7 @@ let tree = await buildTree(mockRoot, cfg);
 let flat = flatten(tree);
 check('默认：空目录与纯 js 目录被隐藏',
   JSON.stringify(flat) === JSON.stringify([
-    'docs/', 'docs/img/', 'docs/img/pic.png', 'docs/a.md', 'docs/b.mmd', 'docs/data.json', 'note.md',
+    'docs/', 'docs/img/', 'docs/img/pic.png', 'docs/a.md', 'docs/b.mmd', 'note.md',
   ]), JSON.stringify(flat));
 
 // ---------- hideEmptyDirs = false ----------
