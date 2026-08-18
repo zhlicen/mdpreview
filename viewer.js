@@ -183,7 +183,7 @@ function splitFrontmatter(text) {
 }
 
 function esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 // 主题切换时重新初始化 mermaid 配色并重绘当前图表
@@ -213,6 +213,11 @@ function renderMermaidBlocks(root) {
     div.dataset.src = codes[i].textContent; // 保存源码供主题切换后重绘
     div.textContent = codes[i].textContent;
     pre.parentNode.replaceChild(div, pre);
+  }
+  // 独立 .mmd 文件的 mermaid 块：通过 JS 设置 data-src（避免 HTML 属性编码问题）
+  var standalone = root.querySelectorAll('.mermaid:not([data-src])');
+  for (var j = 0; j < standalone.length; j++) {
+    standalone[j].dataset.src = standalone[j].textContent;
   }
   var nodes = root.querySelectorAll('.mermaid');
   if (nodes.length) {
@@ -257,7 +262,7 @@ function showDoc(d) {
     if (sp.fm) fmHtml = '<details class="fm"><summary>' + esc(t('frontmatter')) + '</summary><pre>' + esc(sp.fm) + '</pre></details>';
     html = marked.parse(sp.body);
   } else if (d.kind === 'mmd') {
-    html = '<div class="mermaid" data-src="' + esc(d.content) + '">' + esc(d.content) + '</div>' +
+    html = '<div class="mermaid">' + esc(d.content) + '</div>' +
       '<details class="fm"><summary>' + esc(t('mermaidSrc')) + '</summary><pre>' + esc(d.content) + '</pre></details>';
   } else if (d.kind === 'json') {
     var pretty = d.content;
