@@ -362,7 +362,7 @@ function initPage() {
         return;
       }
       var h0 = decodeURIComponent(location.hash.slice(1));
-      if (h0) location.hash = '#' + h0; // 触发重新加载新目录下的同名文件
+      if (h0) route();              // 刷新后 hash 已存在，直接调 route 加载文件（重新设置同值不会触发 hashchange）
     })
     .catch(function (e) {
       if (e && e.name === 'NotAllowedError') {
