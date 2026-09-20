@@ -1,7 +1,7 @@
 // 预览页逻辑。两种数据源：
 //   'handle' —— File System Access API（「选择文件夹…」进入，句柄可持久化）
 //   'url'    —— 地址栏 file:// 目录直开（?dir=C:/…，fetch 目录列表）
-import { pickDir, restoreDir, requestAccess, forgetDir, listFiles, readFile, getExtConfig, buildTreeFromUrl, readFileFromUrl } from './fs.js';
+import { pickDir, restoreDir, requestAccess, forgetDir, listFiles, readFile, getExtConfig, buildTreeFromUrl, readFileFromUrl, readBlob, readBlobFromUrl } from './fs.js';
 import { t } from './i18n.js';
 import { initTheme, toggleTheme } from './theme.js';
 import { katexExtensions } from './katex-ext.js';
@@ -259,8 +259,44 @@ function showImage(doc) {
   docEl.innerHTML = '<div style="text-align:center"><img src="' + url + '" alt="' + esc(doc.path) + '"></div>';
 }
 
+// 文档内嵌图片：把相对路径解析成 blob URL（扩展页无法直接按相对路径访问本地文件）
+var embeddedUrls = [];
+function revokeEmbeddedUrls() {
+  for (var i = 0; i < embeddedUrls.length; i++) URL.revokeObjectURL(embeddedUrls[i]);
+  embeddedUrls = [];
+}
+function loadEmbeddedImages(root, baseDocPath) {
+  var imgs = root.querySelectorAll('img[src]');
+  for (var i = 0; i < imgs.length; i++) {
+    (function (img) {
+      var src = img.getAttribute('src');
+      if (!src) return;
+      if (/^(https?:|data:|blob:)/i.test(src)) return; // 外链/内联图不动
+      var clean = src.split('#')[0].split('?')[0];     // 去掉锚点/查询参数
+      var rel;
+      try { rel = resolveRel(dirOf(baseDocPath), decodeURIComponent(clean)); }
+      catch (e) { rel = resolveRel(dirOf(baseDocPath), clean); }
+      var p = (mode === 'url') ? readBlobFromUrl(urlBase, rel) : readBlob(rootHandle, rel);
+      p.then(function (blob) {
+        if (blob) {
+          var url = URL.createObjectURL(blob);
+          embeddedUrls.push(url);
+          img.src = url;
+        } else {
+          img.classList.add('img-broken');
+          img.alt = (img.alt || '图片') + ' [无法加载: ' + rel + ']';
+        }
+      }).catch(function () {
+        img.classList.add('img-broken');
+        img.alt = (img.alt || '图片') + ' [无法加载: ' + rel + ']';
+      });
+    })(imgs[i]);
+  }
+}
+
 function showDoc(d) {
   currentDoc = d;
+  revokeEmbeddedUrls(); // 释放上一篇文档的图片 blob URL
   var html = '', fmHtml = '';
   if (d.kind === 'md') {
     var sp = splitFrontmatter(d.content);
@@ -278,6 +314,7 @@ function showDoc(d) {
   }
   docEl.innerHTML = fmHtml + html;
   rewriteLinks(docEl, d.path);
+  loadEmbeddedImages(docEl, d.path);
   renderMermaidBlocks(docEl);
   docEl.parentNode.scrollTop = 0;
 }
@@ -302,6 +339,7 @@ function route() {
 
 function clearDoc(msg) {
   if (!msg) msg = t('pickFromLeft');
+  revokeEmbeddedUrls();
   docEl.innerHTML = '<div class="empty">' + msg + '</div>';
   current = null; currentDoc = null; highlight();
   crumb.textContent = t('noDirSelected');

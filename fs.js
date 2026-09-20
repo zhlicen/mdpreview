@@ -287,3 +287,21 @@ export async function readFileFromUrl(basePath, rel) {
     : 'text';
   return { path: rel, kind, content };
 }
+
+// ---------------- 文档内嵌图片 ----------------
+// 与树里点击图片不同：这里读任意后缀的二进制文件（不受后缀配置约束），
+// 供 Markdown 里的 ![](相对路径) 渲染。读不到返回 null，不抛异常。
+
+export async function readBlob(root, rel) {
+  try {
+    const handle = await getFileHandle(root, rel);
+    if (!handle) return null;
+    return await handle.getFile();
+  } catch (e) { return null; }
+}
+
+export async function readBlobFromUrl(basePath, rel) {
+  try {
+    return await xhrFile(fileUrl(basePath, rel), 'blob');
+  } catch (e) { return null; }
+}
