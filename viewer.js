@@ -4,6 +4,7 @@
 import { pickDir, restoreDir, requestAccess, forgetDir, listFiles, readFile, getExtConfig, buildTreeFromUrl, readFileFromUrl } from './fs.js';
 import { t } from './i18n.js';
 import { initTheme, toggleTheme } from './theme.js';
+import { katexExtensions } from './katex-ext.js';
 
 var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 var currentMermaidTheme = dark ? 'dark' : 'default';
@@ -12,6 +13,10 @@ try { mermaid.initialize({ startOnLoad: false, theme: currentMermaidTheme, secur
 catch (e) { console.warn('mermaid init failed:', e); }
 try { marked.setOptions({ gfm: true, breaks: false }); }
 catch (e) { console.warn('marked init failed:', e); }
+// 数学公式（$...$ / $$...$$ → KaTeX）；katex 缺失时静默降级为纯文本
+try {
+  if (typeof katex !== 'undefined') marked.use({ extensions: katexExtensions(katex) });
+} catch (e) { console.warn('katex extension failed:', e); }
 
 var treeEl = document.getElementById('tree');
 var treeLoading = document.getElementById('treeLoading');

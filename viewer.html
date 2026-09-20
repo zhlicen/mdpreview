@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>mdpreview</title>
+<link rel="stylesheet" href="lib/katex/katex.min.css">
 <script src="err-surface.js"></script>
 <script src="theme-boot.js"></script>
 <style>
@@ -86,6 +87,8 @@
   details.fm summary{cursor:pointer;padding:8px 13px;font-size:12.5px;color:var(--fg-dim);user-select:none}
   details.fm pre{margin:0;border:none;border-top:1px solid var(--border);border-radius:0 0 8px 8px;font-size:12.5px}
   .mermaid{margin:1.2em 0;text-align:center;overflow-x:auto}
+  .katex-block{margin:1em 0;overflow-x:auto;overflow-y:hidden;padding:2px 0}
+  .katex-display{overflow-x:auto;overflow-y:hidden;padding:2px 0}
   .mermaid svg{max-width:100%;height:auto}
   .err{border:1px solid #d1242f;background:#ffebe9;color:#82071e;padding:10px 13px;
        border-radius:8px;font-size:13px;white-space:pre-wrap}
@@ -130,6 +133,7 @@
 
 <script src="lib/marked.min.js"></script>
 <script src="lib/mermaid.min.js"></script>
+<script src="lib/katex/katex.min.js"></script>
 <script type="module" src="viewer.js"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@
 - **两种打开方式**：在地址栏打开 `file://` 目录时点击工具栏图标自动检测并直开，或手动选择文件夹（File System Access API，授权后自动恢复）。
 - **左侧文件树**：可折叠目录结构，支持文件后缀过滤；没有可显示文件的目录可自动隐藏；搜索过滤时未匹配的文件夹同步隐藏。
 - **Markdown 渲染**：表格、代码块、引用、图片等，基于 [marked](https://github.com/markedjs/marked)（已内置）。
+- **数学公式**：行内 `$...$` 和块级 `$$...$$` LaTeX 公式，基于 KaTeX 渲染（已内置）。
 - **Mermaid 图表**：Markdown 中的 `` ```mermaid `` 代码块和独立 `.mmd` 文件直接渲染。
 - **Frontmatter**：YAML 前置信息折叠成可展开的元数据面板。
 - **站内链接**：文档内的 `.md` 相对链接在扩展内直接跳转。
@@ -78,7 +79,9 @@ extension/
   options.html/js        # 设置页面
   _locales/en/           # Chrome i18n 消息（英文）
   _locales/zh_CN/        # Chrome i18n 消息（中文）
+  katex-ext.js           # marked 数学扩展（$...$ / $$...$$）
   lib/marked.min.js      # 内置 marked（Markdown 解析器）
+  lib/katex/             # 内置 KaTeX（数学渲染器 + 字体）
   lib/mermaid.min.js     # 内置 Mermaid（图表渲染器）
   icons/                 # 扩展图标（16/32/48/128）
   tools/                 # 构建脚本（图标生成、测试）

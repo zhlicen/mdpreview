@@ -8,6 +8,7 @@ English · [中文](./README.zh-CN.md)
 - **Two ways to open a folder**: click the toolbar icon while viewing a `file://` directory in the address bar (auto-detected), or pick a folder manually via the File System Access API (persists across sessions).
 - **File tree**: collapsible directory tree with configurable file extension filters; folders with no displayable files can be hidden automatically; search-as-you-type hides unmatched folders.
 - **Markdown rendering**: tables, code blocks, blockquotes, images — powered by [marked](https://github.com/markedjs/marked) (bundled).
+- **Math formulas**: inline `$...$` and block `$$...$$` LaTeX rendered by KaTeX (bundled).
 - **Mermaid diagrams**: inline `` ```mermaid `` code blocks and standalone `.mmd` files rendered directly.
 - **Frontmatter**: YAML frontmatter folded into a collapsible metadata panel.
 - **Internal links**: relative `.md` links within documents navigate inside the extension.
@@ -76,7 +77,9 @@ extension/
   options.html/js        # Settings page
   _locales/en/           # Chrome i18n messages (English)
   _locales/zh_CN/        # Chrome i18n messages (Chinese)
+  katex-ext.js           # marked extension: LaTeX math ($...$ / $$...$$)
   lib/marked.min.js      # Bundled marked (Markdown parser)
+  lib/katex/             # Bundled KaTeX (math renderer + fonts)
   lib/mermaid.min.js     # Bundled Mermaid (diagram renderer)
   icons/                 # Extension icons (16/32/48/128)
   tools/                 # Build scripts (icon generation, tests)
