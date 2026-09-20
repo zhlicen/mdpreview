@@ -40,6 +40,7 @@
 <script src="../lib/katex/katex.min.js"></script>
 <script type="module">
 import { katexExtensions } from '../katex-ext.js';
+import { resolveDocRef } from '../urlutil.js';
 
 marked.setOptions({ gfm: true, breaks: false });
 marked.use({ extensions: katexExtensions(katex) });
@@ -76,14 +77,15 @@ for (const c of codes) {
 const nodes = docEl.querySelectorAll('.mermaid');
 if (nodes.length) { try { await mermaid.run({ nodes }); } catch(e) { console.warn('mermaid:', e); } }
 
-// 相对图片 → blob URL（与 viewer.js 的 loadEmbeddedImages 同逻辑；此处走 fetch）
-const baseDir = src.slice(0, src.lastIndexOf('/') + 1);
-let imgErrors = [];
+// 相对图片 → blob URL（复用扩展的 resolveDocRef，保证验证的是真实解析逻辑）
+const mdPath = src.replace(/^\//, '');   // 文档相对路径（相对站点根）
+const imgErrors = [];
 const imgJobs = Array.from(docEl.querySelectorAll('img[src]')).map(async (img) => {
   const s = img.getAttribute('src');
   if (!s || /^(https?:|data:|blob:)/i.test(s)) return;
-  const rel = decodeURIComponent(s.split('#')[0].split('?')[0]);
-  const url = new URL(rel.replace(/^\//, ''), location.origin + baseDir).href;
+  const rel = resolveDocRef(mdPath, s);
+  if (!rel) return;
+  const url = new URL(rel, location.origin).href;
   try {
     const r = await fetch(url);
     if (!r.ok) throw new Error('HTTP ' + r.status);

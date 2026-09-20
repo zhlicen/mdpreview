@@ -32,3 +32,37 @@ export function parseFileUrl(rawUrl) {
   if (!dir) return null;
   return { dir: dir.split('\\').join('/'), select };
 }
+
+// ---------------- 文档内相对引用路径 ----------------
+
+// 取所在目录：'a/b/c.md' → 'a/b'；无目录返回 ''
+export function dirOf(p) {
+  const i = String(p).lastIndexOf('/');
+  return i < 0 ? '' : String(p).slice(0, i);
+}
+
+// 相对路径解析：resolveRel('a/b', '../x/y.md') → 'x/y.md'
+// 以 '/' 开头视为根相对（去掉前导斜杠）
+export function resolveRel(base, rel) {
+  if (String(rel).indexOf('/') === 0) return String(rel).slice(1);
+  const parts = (base ? String(base).split('/') : []).concat(String(rel).split('/'));
+  const out = [];
+  for (const s of parts) {
+    if (s === '' || s === '.') continue;
+    if (s === '..') out.pop(); else out.push(s);
+  }
+  return out.join('/');
+}
+
+// 解析 Markdown 里的引用（图片/链接）：以文档路径为基准，返回绝对（相对根）路径。
+// 处理 ./ ../、百分号编码、# 锚点与 ? 查询参数。无法解析时返回 null。
+export function resolveDocRef(docPath, ref) {
+  if (!ref) return null;
+  const s = String(ref);
+  if (/^[a-z][a-z0-9+.-]*:/i.test(s) || s.indexOf('//') === 0) return null; // http:, data:, file: 等
+  let clean = s.split('#')[0].split('?')[0];
+  if (!clean) return null;
+  let decoded = clean;
+  try { decoded = decodeURIComponent(clean); } catch (e) { /* 保留原文 */ }
+  return resolveRel(dirOf(docPath), decoded);
+}

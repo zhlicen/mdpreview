@@ -5,6 +5,7 @@ import { pickDir, restoreDir, requestAccess, forgetDir, listFiles, readFile, get
 import { t } from './i18n.js';
 import { initTheme, toggleTheme } from './theme.js';
 import { katexExtensions } from './katex-ext.js';
+import { dirOf, resolveRel, resolveDocRef } from './urlutil.js';
 
 var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 var currentMermaidTheme = dark ? 'dark' : 'default';
@@ -78,19 +79,7 @@ function checkEnv() {
   }
 }
 
-// ---------- 路径工具 ----------
-function dirOf(p) { var i = p.lastIndexOf('/'); return i < 0 ? '' : p.slice(0, i); }
-function resolveRel(base, rel) {
-  if (rel.indexOf('/') === 0) return rel.slice(1);
-  var parts = (base ? base.split('/') : []).concat(rel.split('/'));
-  var out = [];
-  for (var i = 0; i < parts.length; i++) {
-    var s = parts[i];
-    if (s === '' || s === '.') continue;
-    if (s === '..') out.pop(); else out.push(s);
-  }
-  return out.join('/');
-}
+// ---------- 路径工具（纯函数在 urlutil.js，便于单元测试） ----------
 
 // ---------- 文件树 ----------
 function renderTree(nodes, parent, depth) {
@@ -272,10 +261,8 @@ function loadEmbeddedImages(root, baseDocPath) {
       var src = img.getAttribute('src');
       if (!src) return;
       if (/^(https?:|data:|blob:)/i.test(src)) return; // 外链/内联图不动
-      var clean = src.split('#')[0].split('?')[0];     // 去掉锚点/查询参数
-      var rel;
-      try { rel = resolveRel(dirOf(baseDocPath), decodeURIComponent(clean)); }
-      catch (e) { rel = resolveRel(dirOf(baseDocPath), clean); }
+      var rel = resolveDocRef(baseDocPath, src);       // 相对路径按文档目录解析
+      if (!rel) return;                                 // 非本地引用（如 file: 协议）不动
       var p = (mode === 'url') ? readBlobFromUrl(urlBase, rel) : readBlob(rootHandle, rel);
       p.then(function (blob) {
         if (blob) {

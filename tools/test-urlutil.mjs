@@ -51,5 +51,26 @@ check('中文与空格逐段编码',
 check('与 parseFileUrl 往返一致',
   fileUrl(parseFileUrl('file:///C:/%E6%96%87%E6%A1%A3/readme.md').dir, 'readme.md') === 'file:///C:/%E6%96%87%E6%A1%A3/readme.md');
 
+
+// ---------- 文档内相对引用（图片/链接路径） ----------
+import { dirOf, resolveRel, resolveDocRef } from '../urlutil.js';
+
+check('dirOf 取目录', dirOf('docs/a/b.md') === 'docs/a' && dirOf('a.md') === '');
+check('resolveRel 同级', resolveRel('docs', './pic.png') === 'docs/pic.png');
+check('resolveRel 上一级', resolveRel('docs/sub', '../img/x.png') === 'docs/img/x.png');
+check('resolveRel 根相对', resolveRel('docs', '/top.png') === 'top.png');
+
+check('图片：./ 前缀', resolveDocRef('docs/readme.md', './test-image.png') === 'docs/test-image.png',
+  String(resolveDocRef('docs/readme.md', './test-image.png')));
+check('图片：根目录文档', resolveDocRef('渲染测试.md', './test-image.png') === 'test-image.png',
+  String(resolveDocRef('渲染测试.md', './test-image.png')));
+check('图片：中文路径编码', resolveDocRef('测试/a.md', './图片.png') === '测试/图片.png');
+check('图片：百分号编码', resolveDocRef('docs/a.md', './my%20image.png') === 'docs/my image.png');
+check('图片：带查询串/锚点', resolveDocRef('docs/a.md', './p.png?v=2#x') === 'docs/p.png');
+check('图片：http 外链不处理', resolveDocRef('docs/a.md', 'https://x.com/a.png') === null);
+check('图片：data URI 不处理', resolveDocRef('docs/a.md', 'data:image/png;base64,AAA') === null);
+check('图片：file: 协议不处理', resolveDocRef('docs/a.md', 'file:///C:/a.png') === null);
+check('图片：空引用返回 null', resolveDocRef('docs/a.md', '') === null);
+
 console.log(failed ? `\n${failed} 项失败` : '\n全部通过');
 process.exit(failed ? 1 : 0);
